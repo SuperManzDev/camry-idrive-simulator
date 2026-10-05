@@ -1,0 +1,298 @@
+/* ==========================================================================
+   2012 TOYOTA CAMRY iDRIVE SIMULATOR — BASE DESIGN TOKENS & RESET
+   css/base.css
+   Milestone 1: Shell & Theming Foundation
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Universal Modern CSS Reset
+   -------------------------------------------------------------------------- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+  overflow: hidden;
+  background-color: #060709;
+  color: #e6edf8;
+  font-family: 'Rajdhani', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  touch-action: manipulation;
+}
+
+button {
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* --------------------------------------------------------------------------
+   2. Global Stage & Geometry Tokens
+   -------------------------------------------------------------------------- */
+:root {
+  /* Physical Automotive Dimensions */
+  --display-native-width: 1280px;
+  --display-native-height: 800px;
+  --console-native-width: 360px;
+  --console-native-height: 800px;
+  --cockpit-gutter: 28px;
+  --stage-native-width: 1668px; /* 1280 + 28 + 360 */
+  --stage-native-height: 800px;
+
+  /* Scaling Variables */
+  --stage-scale: 1;
+  --display-scale: 1;
+
+  /* Bezel & Enclosure Geometry */
+  --bezel-border-width: 14px;
+  --bezel-corner-radius: 18px;
+  --screen-corner-radius: 10px;
+  --console-corner-radius: 24px;
+
+  /* Dashboard Surround Polymers */
+  --chassis-obsidian-dark: #101114;
+  --chassis-obsidian-mid: #1a1b1e;
+  --chassis-obsidian-light: #26282e;
+  --chassis-trim-champagne: #d4c4a8;
+  --chassis-trim-champagne-light: #faedd2;
+  --chassis-trim-champagne-dark: #988467;
+  --chassis-trim-titanium: rgba(255, 255, 255, 0.35);
+
+  /* Console Cradle Materials */
+  --console-bg-primary: #151619;
+  --console-bg-secondary: #1c1e23;
+  --console-texture: radial-gradient(circle at 50% 25%, #252830 0%, #151619 75%, #0f1012 100%);
+  --trim-champagne-gold: #d4c4a8;
+  --trim-champagne-gradient: linear-gradient(135deg, #faedd2 0%, #d4c4a8 30%, #a38d70 70%, #685743 100%);
+}
+
+/* ==========================================================================
+   3. COLOR PALETTE ENGINE TOKENS
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Palette 1: Camry Optitron Cool Blue (Default)
+   Toyota Optitron Instrument Cluster Luminescence
+   -------------------------------------------------------------------------- */
+[data-palette="optitron"],
+:root:not([data-palette]) {
+  /* Core Accents */
+  --accent-primary: #00d2ff;          /* Crisp Ice Blue */
+  --accent-primary-hover: #33dbff;
+  --accent-primary-active: #00a8cc;
+  --accent-secondary: #ffffff;        /* Pure White Luminescence */
+  --accent-tertiary: #0088cc;         /* Deep Optitron Blue */
+  --accent-glow-rgb: 0, 210, 255;
+  --accent-glow: rgba(var(--accent-glow-rgb), 0.45);
+  --accent-glow-subtle: rgba(var(--accent-glow-rgb), 0.18);
+  --accent-gradient: linear-gradient(135deg, #00d2ff 0%, #0088cc 100%);
+  --accent-metallic: linear-gradient(135deg, #ffffff 0%, #00d2ff 50%, #006699 100%);
+
+  /* Needle & Instrument Illumination */
+  --needle-core: #ffffff;
+  --needle-glow: 0 0 8px rgba(0, 210, 255, 0.85), 0 0 16px rgba(0, 210, 255, 0.45);
+  --needle-hub: #1a2234;
+  --gauge-tick-active: #00d2ff;
+  --gauge-tick-inactive: rgba(139, 162, 196, 0.35);
+
+  /* Trim & Bevel */
+  --trim-color: #00d2ff;
+  --trim-gradient: linear-gradient(180deg, rgba(0, 210, 255, 0.4) 0%, rgba(0, 136, 204, 0.1) 100%);
+  --border-subtle: rgba(0, 210, 255, 0.20);
+  --border-focused: #00d2ff;
+  --indicator-halo: 0 0 12px rgba(0, 210, 255, 0.6);
+}
+
+/* --------------------------------------------------------------------------
+   Palette 2: Champagne Gold & Cool Blue
+   Reflecting the 2012 Camry Golden Cream Exterior (Paint 4Q2) + Optitron Blue
+   -------------------------------------------------------------------------- */
+[data-palette="champagne"] {
+  /* Core Accents */
+  --accent-primary: #d4c4a8;          /* Satin Metallic Champagne Gold */
+  --accent-primary-hover: #faedd2;    /* Champagne Highlight */
+  --accent-primary-active: #988467;   /* Warm Bronze Shadow */
+  --accent-secondary: #00c0f0;        /* Paired Toyota Cool Blue Accent */
+  --accent-tertiary: #faedd2;         /* Warm Luminescent Surface */
+  --accent-glow-rgb: 212, 196, 168;
+  --accent-glow: rgba(var(--accent-glow-rgb), 0.45);
+  --accent-glow-subtle: rgba(var(--accent-glow-rgb), 0.20);
+  --accent-gradient: linear-gradient(135deg, #faedd2 0%, #d4c4a8 50%, #988467 100%);
+  --accent-metallic: linear-gradient(135deg, #faedd2 0%, #d4c4a8 40%, #988467 80%, #685a44 100%);
+
+  /* Needle & Instrument Illumination */
+  --needle-core: #ffffff;
+  --needle-glow: 0 0 8px rgba(250, 237, 210, 0.9), 0 0 16px rgba(0, 192, 240, 0.5);
+  --needle-hub: #2a231b;
+  --gauge-tick-active: #faedd2;
+  --gauge-tick-inactive: rgba(191, 168, 136, 0.35);
+
+  /* Trim & Bevel */
+  --trim-color: #d4c4a8;
+  --trim-gradient: linear-gradient(180deg, rgba(250, 237, 210, 0.45) 0%, rgba(152, 132, 103, 0.2) 100%);
+  --border-subtle: rgba(212, 196, 168, 0.25);
+  --border-focused: #d4c4a8;
+  --indicator-halo: 0 0 12px rgba(212, 196, 168, 0.55);
+}
+
+/* --------------------------------------------------------------------------
+   Palette 3: Amber Night Shift
+   Scotopic Vision Preservation (605nm Aviation & Classic Night Driving)
+   -------------------------------------------------------------------------- */
+[data-palette="amber"] {
+  /* Core Accents */
+  --accent-primary: #ff9900;          /* Warm Amber Glow */
+  --accent-primary-hover: #ffad33;
+  --accent-primary-active: #ff6600;   /* Deep Amber Orange */
+  --accent-secondary: #ff6600;        /* High-Contrast Amber Orange */
+  --accent-tertiary: #cc5500;         /* Deep Carbon Amber */
+  --accent-glow-rgb: 255, 153, 0;
+  --accent-glow: rgba(var(--accent-glow-rgb), 0.50);
+  --accent-glow-subtle: rgba(var(--accent-glow-rgb), 0.22);
+  --accent-gradient: linear-gradient(135deg, #ffb84d 0%, #ff9900 50%, #ff6600 100%);
+  --accent-metallic: linear-gradient(135deg, #fff0d4 0%, #ff9900 50%, #cc5500 100%);
+
+  /* Needle & Instrument Illumination */
+  --needle-core: #ffffff;
+  --needle-glow: 0 0 8px rgba(255, 153, 0, 0.9), 0 0 16px rgba(255, 102, 0, 0.5);
+  --needle-hub: #221406;
+  --gauge-tick-active: #ff9900;
+  --gauge-tick-inactive: rgba(184, 134, 11, 0.35);
+
+  /* Trim & Bevel */
+  --trim-color: #ff9900;
+  --trim-gradient: linear-gradient(180deg, rgba(255, 153, 0, 0.4) 0%, rgba(255, 102, 0, 0.15) 100%);
+  --border-subtle: rgba(255, 153, 0, 0.25);
+  --border-focused: #ff9900;
+  --indicator-halo: 0 0 12px rgba(255, 153, 0, 0.6);
+}
+
+/* ==========================================================================
+   4. DAY / NIGHT LIGHTING MODE MATRIX
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Night Mode (Default Automotive Illumination)
+   Deep dark backgrounds with vivid needle & glyph luminescence
+   -------------------------------------------------------------------------- */
+[data-mode="night"],
+:root:not([data-mode]) {
+  --display-luminance: night;
+  --accent-glow-filter: drop-shadow(0 0 8px var(--accent-glow));
+  --needle-glow-filter: drop-shadow(0 0 6px var(--accent-primary));
+  --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.85);
+  --chrome-opacity: 0.45;
+  --status-bar-bg: linear-gradient(180deg, rgba(10, 12, 16, 0.94) 0%, rgba(6, 8, 11, 0.90) 100%);
+  --status-bar-border: rgba(var(--accent-glow-rgb), 0.25);
+  --pill-bg: rgba(255, 255, 255, 0.06);
+  --pill-hover-bg: rgba(255, 255, 255, 0.14);
+  --pill-active-bg: rgba(var(--accent-glow-rgb), 0.25);
+}
+
+[data-palette="optitron"][data-mode="night"],
+:root:not([data-palette]):not([data-mode]),
+:root:not([data-palette])[data-mode="night"] {
+  --bg-base: #0a0b0e;             /* Deep Obsidian Black */
+  --bg-surface: #11141c;          /* Midnight Slate */
+  --bg-surface-elevated: #181d28;  /* Elevated Card Surface */
+  --bg-card-active: #1e2638;
+  --text-primary: #ffffff;
+  --text-secondary: #8ba2c4;      /* Muted Ice Blue */
+  --text-muted: #536279;
+}
+
+[data-palette="champagne"][data-mode="night"] {
+  --bg-base: #0e0d0b;             /* Espresso Black */
+  --bg-surface: #161411;          /* Dark Bronze Slate */
+  --bg-surface-elevated: #221e19;  /* Elevated Card Surface */
+  --bg-card-active: #2f2820;
+  --text-primary: #faedd2;        /* Warm Cream White */
+  --text-secondary: #bfa888;      /* Muted Champagne */
+  --text-muted: #736450;
+}
+
+[data-palette="amber"][data-mode="night"] {
+  --bg-base: #070605;             /* Pitch Carbon Black */
+  --bg-surface: #120e08;          /* Dark Amber Slate */
+  --bg-surface-elevated: #1d160c;  /* Elevated Card Surface */
+  --bg-card-active: #2a1f10;
+  --text-primary: #fff0d4;        /* Soft Amber White */
+  --text-secondary: #c98832;      /* Muted Amber */
+  --text-muted: #794e18;
+}
+
+/* --------------------------------------------------------------------------
+   Day Mode (Direct Sunlight High Contrast)
+   Elevated slate backgrounds, crisp edges, zero diffuse glare
+   -------------------------------------------------------------------------- */
+[data-mode="day"] {
+  --display-luminance: day;
+  --accent-glow-filter: none;
+  --needle-glow-filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.8));
+  --card-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  --chrome-opacity: 0.85;
+  --status-bar-bg: linear-gradient(180deg, rgba(28, 33, 44, 0.98) 0%, rgba(20, 24, 32, 0.95) 100%);
+  --status-bar-border: rgba(var(--accent-glow-rgb), 0.40);
+  --pill-bg: rgba(255, 255, 255, 0.12);
+  --pill-hover-bg: rgba(255, 255, 255, 0.22);
+  --pill-active-bg: rgba(var(--accent-glow-rgb), 0.40);
+}
+
+[data-palette="optitron"][data-mode="day"],
+:root:not([data-palette])[data-mode="day"] {
+  --bg-base: #141822;             /* High-Contrast Automotive Slate */
+  --bg-surface: #1d2331;
+  --bg-surface-elevated: #283042;
+  --bg-card-active: #323d54;
+  --text-primary: #ffffff;
+  --text-secondary: #a6bdda;
+  --text-muted: #70849f;
+}
+
+[data-palette="champagne"][data-mode="day"] {
+  --bg-base: #1a1713;             /* High-Contrast Warm Bronze Slate */
+  --bg-surface: #24201a;
+  --bg-surface-elevated: #322b22;
+  --bg-card-active: #40372b;
+  --text-primary: #ffffff;
+  --text-secondary: #d4c4a8;
+  --text-muted: #8e7f68;
+}
+
+[data-palette="amber"][data-mode="day"] {
+  --bg-base: #14100b;             /* High-Contrast Dark Amber Slate */
+  --bg-surface: #1e180f;
+  --bg-surface-elevated: #2c2114;
+  --bg-card-active: #3b2c19;
+  --text-primary: #ffffff;
+  --text-secondary: #ffb84d;
+  --text-muted: #99631b;
+}
+
+/* --------------------------------------------------------------------------
+   5. Dynamic Lighting Transitions
+   Smooth 300ms easing between Palettes and Day/Night modes
+   -------------------------------------------------------------------------- */
+.head-unit-container,
+.head-unit-container *,
+.automotive-status-bar,
+.automotive-status-bar *,
+.console-tray-stage,
+.console-tray-stage * {
+  transition: background-color 300ms cubic-bezier(0.4, 0, 0.2, 1),
+              border-color 300ms cubic-bezier(0.4, 0, 0.2, 1),
+              color 300ms cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1),
+              filter 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="cic" data-palette="optitron" data-mode="night" data-view="home">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#0a0b0e">
+  <title>2012 Toyota Camry iDrive Simulator</title>
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='14' fill='%230a0b0e' stroke='%2300d2ff' stroke-width='2'/><circle cx='16' cy='16' r='4' fill='%2300d2ff'/><line x1='16' y1='16' x2='24' y2='10' stroke='%23ffffff' stroke-width='2' stroke-linecap='round'/></svg>">
+
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/status-bar.css">
+  <link rel="stylesheet" href="css/ui.css">
+
+  <style>
+    /* Google Fonts-style fallback — no external deps, uses system fonts */
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&display=swap');
+  </style>
+</head>
+<body>
+
+  <div id="camry-app-root" class="simulator-viewport">
+    <main id="cockpit-stage" class="cockpit-stage" role="main">
+
+      <!-- ================================================================= -->
+      <!-- 1. 1280x800 Automotive Head Unit Display                          -->
+      <!-- ================================================================= -->
+      <section class="display-viewport-stage" id="display-viewport-stage" aria-label="Camry Head Unit Display">
+
+        <div class="automotive-bezel-frame" id="automotive-bezel-frame">
+          <div class="bezel-trim-lip" aria-hidden="true"></div>
+
+          <div id="head-unit-display"
+               class="head-unit-container"
+               data-theme="cic"
+               data-palette="optitron"
+               data-mode="night"
+               data-view="home">
+
+            <div class="screen-glare-filter" id="screen-glare-filter" aria-hidden="true"></div>
+
+            <!-- Status Bar -->
+            <header id="automotive-status-bar" class="automotive-status-bar status-dock" role="banner">
+              <div class="status-left status-dock-left">
+                <div class="status-trim-badge trim-badge" id="status-trim-badge">
+                  <span class="badge-toyota">CAMRY</span>
+                  <span class="badge-model">XLE V6</span>
+                  <span class="badge-optitron">• OPTITRON</span>
+                </div>
+                <span class="status-divider" aria-hidden="true">•</span>
+                <div class="status-ambient-temp ambient-temp" id="status-ambient-temp">
+                  <span class="temp-val">74</span><span class="temp-unit">°F</span>
+                </div>
+                <span class="status-divider" aria-hidden="true">•</span>
+                <div class="status-gps gps-indicator" id="status-gps-indicator">
+                  <svg class="icon-gps" viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M12 2v3m0 14v3M2 12h3m14 0h3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  </svg>
+                  <span class="gps-label">GPS</span>
+                  <span class="gps-lock-dot"></span>
+                </div>
+              </div>
+
+              <div class="status-center status-dock-center">
+                <div class="status-clock-wrap">
+                  <time id="digital-clock" class="digital-clock">--:-- --</time>
+                </div>
+              </div>
+
+              <div class="status-right status-dock-right">
+                <div class="quick-switches quick-toggle-group">
+                  <button type="button" id="btn-toggle-theme" class="header-pill-badge" title="Cycle Theme (T)">
+                    <span class="pill-label">THEME</span>
+                    <span class="pill-val" id="badge-val-theme">CIC</span>
+                  </button>
+                  <button type="button" id="btn-toggle-palette" class="header-pill-badge" title="Cycle Palette">
+                    <span class="pill-label">PALETTE</span>
+                    <span class="pill-val" id="badge-val-palette">OPTITRON</span>
+                  </button>
+                  <button type="button" id="btn-toggle-mode" class="header-pill-badge mode-toggle-btn" title="Day/Night Mode">
+                    <span class="pill-icon" id="badge-icon-mode">🌙</span>
+                    <span class="pill-val" id="badge-val-mode">NIGHT</span>
+                  </button>
+                </div>
+                <span class="status-divider" aria-hidden="true">•</span>
+                <div class="status-bt bt-status">
+                  <svg class="icon-bt" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M7 7l10 10-5 5V2l5 5L7 17" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  <span class="bt-device-name bt-name">S25 Ultra</span>
+                </div>
+                <div class="status-cellular cellular-status">
+                  <span class="cellular-rat">LTE</span>
+                  <svg class="icon-signal icon-cellular" viewBox="0 0 24 16" width="18" height="13">
+                    <rect x="1" y="11" width="3.5" height="5" rx="1" fill="currentColor"/>
+                    <rect x="6.5" y="8" width="3.5" height="8" rx="1" fill="currentColor"/>
+                    <rect x="12" y="4.5" width="3.5" height="11.5" rx="1" fill="currentColor"/>
+                    <rect x="17.5" y="1" width="3.5" height="15" rx="1" fill="currentColor"/>
+                  </svg>
+                </div>
+                <div class="status-battery battery-status">
+                  <span class="battery-pct">84%</span>
+                  <div class="battery-pill">
+                    <div class="battery-level" style="width: 84%;"></div>
+                  </div>
+                </div>
+              </div>
+            </header>
+
+            <!-- Main View Stage -->
+            <main class="main-stage display-content-area" id="main-stage">
+
+              <!-- Home View (BMW CIC / Audi MMI / Toyota Pano — rendered by JS) -->
+              <div id="view-home" class="display-view active" data-view-id="home"></div>
+
+              <!-- Navigation View -->
+              <div id="view-nav" class="display-view" data-view-id="nav"></div>
+
+              <!-- Media Player View -->
+              <div id="view-media" class="display-view" data-view-id="media"></div>
+
+              <!-- Performance & Telemetry View -->
+              <div id="view-perf" class="display-view" data-view-id="perf"></div>
+
+            </main>
+
+          </div><!-- /#head-unit-display -->
+        </div><!-- /#automotive-bezel-frame -->
+      </section>
+
+
+      <!-- ================================================================= -->
+      <!-- 2. 3D Center Console Cradle                                       -->
+      <!-- ================================================================= -->
+      <aside class="console-tray-stage console-tray-frame" id="console-controller-tray" aria-label="Camry Center Console Controller">
+
+        <div class="console-tray-well">
+
+          <!-- LED Status Dock -->
+          <div id="socket-led-dock" class="console-socket-group socket-led-dock">
+            <div id="socket-led-left" class="led-socket">
+              <div id="led-indicator-1" class="led-dome led-state-bootup" aria-label="Status LED 1"></div>
+            </div>
+            <button type="button" id="btn-socket-connect" class="console-socket-btn btn-connect" title="Cycle LED State (L)">
+              <span class="btn-legend">CONNECT</span>
+            </button>
+            <div id="socket-led-right" class="led-socket">
+              <div id="led-indicator-2" class="led-dome led-state-bootup" aria-label="Status LED 2"></div>
+            </div>
+          </div>
+
+          <!-- Upper Hotkeys (HOME & BACK) -->
+          <div id="socket-upper-hotkeys" class="console-socket-group socket-hotkeys-upper">
+            <button type="button" id="socket-btn-home" class="console-socket-btn hotkey-btn active-route" data-hotkey="HOME" title="Home (H)">
+              <span class="btn-legend">HOME</span>
+            </button>
+            <button type="button" id="socket-btn-back" class="console-socket-btn hotkey-btn" data-hotkey="BACK" title="Back (B)">
+              <span class="btn-legend">BACK</span>
+            </button>
+          </div>
+
+          <!-- Rotary Dial -->
+          <div id="socket-dial-well" class="console-socket-group socket-dial-well">
+            <div id="dial-halo-socket" class="dial-halo-ring">
+              <div id="dial-knurl-socket" class="dial-knurl-cylinder">
+                <div id="dial-brushed-disc" class="dial-brushed-face">
+                  <div class="dial-index-notch"></div>
+                  <button type="button" id="dial-center-socket" class="dial-center-push-cap" aria-label="Dial Push (Enter)">
+                    <span class="dial-center-dot"></span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Lower Hotkeys (NAV, MEDIA, PERF) -->
+          <div id="socket-lower-hotkeys" class="console-socket-group socket-hotkeys-lower">
+            <button type="button" id="socket-btn-nav" class="console-socket-btn hotkey-btn" data-hotkey="NAV" title="Navigation (N)">
+              <span class="btn-legend">NAV</span>
+            </button>
+            <button type="button" id="socket-btn-media" class="console-socket-btn hotkey-btn" data-hotkey="MEDIA" title="Media (Space)">
+              <span class="btn-legend">MEDIA</span>
+            </button>
+            <button type="button" id="socket-btn-perf" class="console-socket-btn hotkey-btn" data-hotkey="PERF" title="Performance (P)">
+              <span class="btn-legend">PERF</span>
+            </button>
+          </div>
+
+          <!-- BMW-Style Volume Toggle -->
+          <div id="socket-volume-well" class="console-socket-group socket-volume-well">
+            <div id="volume-rocker-housing" class="volume-rocker-barrel">
+              <button type="button" id="rocker-vol-up" class="rocker-half rocker-up" aria-label="Volume Up (↑)">
+                <span class="rocker-symbol">▲</span>
+                <span class="rocker-text">VOL +</span>
+              </button>
+              <div id="rocker-mute-indicator" class="rocker-mute-dot" title="Mute (M)"></div>
+              <button type="button" id="rocker-vol-down" class="rocker-half rocker-down" aria-label="Volume Down (↓)">
+                <span class="rocker-symbol">▼</span>
+                <span class="rocker-text">VOL -</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Camry Tunnel Badge -->
+          <div id="socket-tunnel-badge" class="console-tunnel-inlay">
+            <div class="inlay-pinstripe"></div>
+            <div class="inlay-brand-text">CAMRY XV50 · WIRELESS AA</div>
+            <div class="inlay-pinstripe"></div>
+          </div>
+
+        </div><!-- /.console-tray-well -->
+
+        <!-- Keyboard Shortcut Legend (bottom) -->
+        <div style="position:absolute;bottom:8px;left:0;right:0;text-align:center;font-size:8px;letter-spacing:1px;color:rgba(139,162,196,0.35);pointer-events:none;">
+          ←→ DIAL &nbsp;·&nbsp; ↑↓ VOL &nbsp;·&nbsp; SPACE MEDIA &nbsp;·&nbsp; P PERF &nbsp;·&nbsp; N NAV &nbsp;·&nbsp; T THEME
+        </div>
+
+      </aside><!-- /#console-controller-tray -->
+
+    </main><!-- /#cockpit-stage -->
+  </div><!-- /#camry-app-root -->
+
+  <script src="js/display.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

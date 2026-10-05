@@ -1,0 +1,691 @@
+/* ==========================================================================
+   2012 TOYOTA CAMRY iDRIVE SIMULATOR — COCKPIT & BEZEL LAYOUT
+   css/layout.css
+   Milestone 1: Shell & Theming Foundation
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Master Simulator Viewport Container
+   -------------------------------------------------------------------------- */
+#camry-app-root,
+.simulator-viewport {
+  width: 100vw;
+  height: 100vh;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #060709;
+  background-image:
+    radial-gradient(circle at 50% 40%, rgba(25, 28, 36, 0.75) 0%, rgba(6, 7, 9, 0.98) 75%),
+    linear-gradient(180deg, rgba(0, 210, 255, 0.03) 0%, transparent 100%);
+  user-select: none;
+}
+
+:root {
+  --display-native-width: 1308px;
+  --display-native-height: 828px;
+  --console-native-width: 360px;
+  --console-native-height: 800px;
+  --cockpit-gutter: 28px;
+  --stage-native-width: 1696px; /* 1308 + 28 + 360 */
+  --stage-native-height: 828px;
+}
+
+/* --------------------------------------------------------------------------
+   2. Cockpit Stage (Side-by-Side Flex Layout with Dynamic Auto-Scaling)
+   -------------------------------------------------------------------------- */
+#cockpit-stage,
+.cockpit-stage {
+  width: var(--stage-native-width, 1696px);
+  height: var(--stage-native-height, 828px);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: var(--cockpit-gutter, 28px);
+  transform-origin: center center;
+  transform: scale(var(--stage-scale, 1));
+  flex-shrink: 0;
+  transition: transform 0.15s ease-out;
+  position: relative;
+  box-sizing: border-box;
+}
+
+/* --------------------------------------------------------------------------
+   3. Display Viewport Stage (1280x800 Unit Wrapper & Letterbox Prevention)
+   -------------------------------------------------------------------------- */
+#display-viewport-stage,
+.display-viewport-stage {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: var(--display-native-width, 1308px);
+  height: var(--display-native-height, 828px);
+  flex: 0 0 var(--display-native-width, 1308px);
+  box-sizing: border-box;
+  overflow: visible;
+}
+
+/* --------------------------------------------------------------------------
+   4. 2012–2016 OEM+ Luxury Dashboard Bezel Frame
+   -------------------------------------------------------------------------- */
+#automotive-bezel-frame,
+.automotive-bezel-frame {
+  position: relative;
+  box-sizing: content-box;
+  width: 1280px;
+  height: 800px;
+  flex: 0 0 auto;
+  border-radius: var(--bezel-corner-radius, 18px);
+  
+  /* Multi-tone Obsidian Dashboard Polymers */
+  background: linear-gradient(
+    180deg,
+    var(--chassis-obsidian-light, #26282e) 0%,
+    var(--chassis-obsidian-mid, #1a1b1e) 8%,
+    var(--chassis-obsidian-dark, #101114) 92%,
+    #0a0b0d 100%
+  );
+
+  /* 14px Graduated Automotive Bezel Border */
+  border: var(--bezel-border-width, 14px) solid var(--chassis-obsidian-mid, #1a1b1e);
+  border-top-color: #2b2e35;
+  border-bottom-color: #0c0d0f;
+  border-left-color: #17181c;
+  border-right-color: #17181c;
+
+  /* Multi-Layer Depth Shadows (Cabin Recession + Bevel Specular + Exterior Cowl) */
+  box-shadow:
+    inset 0 2px 4px rgba(255, 255, 255, 0.18),
+    inset 0 -3px 8px rgba(0, 0, 0, 0.85),
+    inset 0 0 12px rgba(0, 0, 0, 0.9),
+    0 24px 60px rgba(0, 0, 0, 0.85),
+    0 8px 20px rgba(0, 0, 0, 0.6),
+    0 2px 6px rgba(0, 0, 0, 0.4);
+
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* Machined Brushed Satin Trim Lip (Chamfered ambient metallic accent) */
+.bezel-trim-lip {
+  position: absolute;
+  inset: 0;
+  border-radius: calc(var(--screen-corner-radius, 10px) + 2px);
+  border: 1.5px solid transparent;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.4) 0%,
+    rgba(212, 196, 168, 0.35) 25%,
+    rgba(30, 32, 38, 0.8) 50%,
+    rgba(212, 196, 168, 0.25) 75%,
+    rgba(255, 255, 255, 0.15) 100%
+  ) border-box;
+  -webkit-mask: 
+    linear-gradient(#fff 0 0) padding-box, 
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 998;
+}
+
+/* --------------------------------------------------------------------------
+   5. Exact 1280x800 Automotive Head Unit Viewport Container
+   -------------------------------------------------------------------------- */
+#head-unit-display,
+.head-unit-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+  background-color: var(--bg-base, #0a0b0e);
+  border-radius: var(--screen-corner-radius, 10px);
+  
+  /* Inner Screen Bezel Recession Shadow */
+  box-shadow:
+    inset 0 3px 8px rgba(0, 0, 0, 0.95),
+    inset 0 -2px 6px rgba(0, 0, 0, 0.8),
+    inset 2px 0 6px rgba(0, 0, 0, 0.7),
+    inset -2px 0 6px rgba(0, 0, 0, 0.7);
+
+  display: flex;
+  flex-direction: column;
+  color: var(--text-primary, #ffffff);
+}
+
+/* Secondary Selector Rule: Direct standalone scaling if decoupled */
+.head-unit-container.is-standalone-scale {
+  position: relative;
+  transform-origin: top center;
+  transform: scale(var(--display-scale, 1));
+}
+
+/* --------------------------------------------------------------------------
+   6. Optical Anti-Reflective Glass Glare Filter Overlay
+   -------------------------------------------------------------------------- */
+.screen-glare-filter {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  z-index: 999;
+  
+  /* Optical AR Coating Diagonal Ambient Reflection */
+  background: linear-gradient(
+    125deg,
+    rgba(255, 255, 255, 0.065) 0%,
+    rgba(220, 240, 255, 0.030) 18%,
+    rgba(255, 255, 255, 0.008) 32%,
+    transparent 52%
+  );
+  
+  transition: opacity 350ms cubic-bezier(0.2, 0.8, 0.25, 1), background 350ms ease;
+  user-select: none;
+}
+
+/* Day Mode Glare Adaptation */
+[data-mode="day"] .screen-glare-filter {
+  opacity: 0.85;
+  background: linear-gradient(
+    125deg,
+    rgba(255, 255, 255, 0.12) 0%,
+    rgba(215, 235, 255, 0.05) 22%,
+    rgba(255, 255, 255, 0.015) 38%,
+    transparent 60%
+  );
+}
+
+/* Night Mode Glare Adaptation */
+[data-mode="night"] .screen-glare-filter {
+  opacity: 0.35;
+}
+
+/* Champagne Gold Palette Glare Adaptation */
+[data-palette="champagne"] .screen-glare-filter {
+  background: linear-gradient(
+    125deg,
+    rgba(250, 240, 220, 0.08) 0%,
+    rgba(240, 230, 200, 0.04) 20%,
+    rgba(255, 255, 255, 0.01) 35%,
+    transparent 55%
+  );
+}
+
+/* --------------------------------------------------------------------------
+   6.5 Status Dock Enclosure Override (100% Responsive Inner Width)
+   -------------------------------------------------------------------------- */
+#automotive-status-bar,
+.automotive-status-bar,
+.status-dock {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+/* --------------------------------------------------------------------------
+   7. Main Stage Screen Area (1280px x 752px Content Canvas)
+   -------------------------------------------------------------------------- */
+.main-stage,
+.display-content-area {
+  position: absolute;
+  top: 48px; /* Below 48px status bar */
+  left: 0;
+  width: 100% !important;
+  height: calc(100% - 48px);
+  box-sizing: border-box;
+  overflow: hidden;
+  background-color: transparent;
+}
+
+/* View Containers (Home, Nav, Media, Perf) */
+.display-view {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: none;
+  opacity: 0;
+  transition: opacity 280ms cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.display-view.active {
+  display: flex;
+  flex-direction: column;
+  opacity: 1;
+}
+
+/* Milestone 1 Placeholder View Cards */
+.view-placeholder-card {
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  background: var(--bg-surface, #11141c);
+  border: 1px solid var(--border-subtle, rgba(0, 210, 255, 0.2));
+  box-shadow: var(--card-shadow, 0 10px 30px rgba(0, 0, 0, 0.85));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px;
+  color: var(--text-primary, #ffffff);
+}
+
+.view-placeholder-card h2 {
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--accent-primary, #00d2ff);
+  margin-bottom: 12px;
+  text-transform: uppercase;
+}
+
+.view-placeholder-card p {
+  font-size: 16px;
+  color: var(--text-secondary, #8ba2c4);
+  max-width: 600px;
+  line-height: 1.6;
+}
+
+/* --------------------------------------------------------------------------
+   8. 3D-Styled Camry Center Console Cradle Geometry & Mount Sockets
+   -------------------------------------------------------------------------- */
+#console-controller-tray,
+.console-tray-stage,
+.console-tray-frame {
+  width: var(--console-native-width, 360px);
+  height: var(--console-native-height, 800px);
+  flex: 0 0 var(--console-native-width, 360px);
+  position: relative;
+  border-radius: var(--console-corner-radius, 24px) var(--console-corner-radius, 24px) 20px 20px;
+  box-sizing: border-box;
+  background: var(--console-bg-primary, #151619);
+  background-image: var(--console-texture, radial-gradient(circle at 50% 25%, #252830 0%, #151619 75%, #0f1012 100%));
+  
+  /* 3D Inset Well & Drop Shadow Depth */
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  box-shadow: 
+    inset 0 2px 6px rgba(255, 255, 255, 0.08),
+    inset 0 -8px 24px rgba(0, 0, 0, 0.92),
+    0 24px 60px rgba(0, 0, 0, 0.85),
+    0 4px 12px rgba(0, 0, 0, 0.6);
+  
+  transform: perspective(1200px) rotateX(1.8deg);
+  transform-style: preserve-3d;
+  overflow: hidden;
+}
+
+/* Subtle Champagne Gold Perimeter Trim Inlay */
+.console-tray-frame::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 2px;
+  background: var(--trim-champagne-gradient, linear-gradient(135deg, #faedd2 0%, #d4c4a8 30%, #a38d70 70%, #685743 100%));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0.85;
+}
+
+/* Inner Well Container */
+.console-tray-well {
+  width: 100%;
+  height: 100%;
+  padding: 24px 20px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}
+
+/* Generic Socket Group */
+.console-socket-group {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  position: relative;
+  box-sizing: border-box;
+}
+
+/* Zone 1: Top Dual LED & Connect Socket */
+.socket-led-dock {
+  justify-content: space-between;
+  padding: 0 16px;
+  height: 48px;
+}
+
+.led-socket {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0d0e11;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.95), 0 1px 2px rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.led-dome {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  transition: background-color 0.35s ease, box-shadow 0.35s ease;
+}
+
+/* Dual LED State Machine Visuals */
+.led-state-bootup {
+  background: #00d2ff;
+  box-shadow: 0 0 8px rgba(0, 210, 255, 0.85), 0 0 16px rgba(0, 210, 255, 0.5);
+  animation: led-rainbow-sweep 2.5s linear infinite;
+}
+
+.led-state-pairing {
+  background: #00ff66;
+  box-shadow: 0 0 10px #00ff66, 0 0 20px rgba(0, 255, 102, 0.6);
+  animation: led-pulse 0.625s ease-in-out infinite alternate;
+}
+
+.led-state-tablet {
+  background: #00e5ff;
+  box-shadow: 0 0 12px #00e5ff, 0 0 24px rgba(0, 229, 255, 0.5);
+}
+
+.led-state-phone {
+  background: #ff1744;
+  box-shadow: 0 0 12px #ff1744, 0 0 24px rgba(255, 23, 68, 0.5);
+}
+
+@keyframes led-rainbow-sweep {
+  0% { filter: hue-rotate(0deg); }
+  100% { filter: hue-rotate(360deg); }
+}
+
+@keyframes led-pulse {
+  from { opacity: 0.3; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1.05); }
+}
+
+/* Console Socket Buttons Base */
+.console-socket-btn {
+  background: linear-gradient(180deg, #24272e 0%, #17181c 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom-color: rgba(0, 0, 0, 0.9);
+  color: #c4d0df;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  cursor: pointer;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.12);
+  transition: transform 0.1s ease, box-shadow 0.1s ease, color 0.2s ease, border-color 0.2s ease;
+  user-select: none;
+}
+
+.console-socket-btn:hover {
+  color: #ffffff;
+  border-color: var(--accent-primary, #00d2ff);
+}
+
+.console-socket-btn:active,
+.console-socket-btn.pressed {
+  transform: translateY(2px) scale(0.97);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.9), inset 0 2px 4px rgba(0, 0, 0, 0.7);
+  color: var(--accent-primary, #00d2ff);
+}
+
+.btn-connect {
+  height: 28px;
+  padding: 0 14px;
+  border-radius: 14px;
+  font-size: 10px;
+}
+
+/* Zone 2: Upper Hotkeys Socket (HOME & BACK) */
+.socket-hotkeys-upper {
+  justify-content: space-between;
+  padding: 0 28px;
+}
+
+.hotkey-btn {
+  width: 76px;
+  height: 38px;
+  border-radius: 8px;
+}
+
+.hotkey-btn.active-route {
+  color: #ffffff;
+  border-color: var(--accent-primary, #00d2ff);
+  box-shadow: 0 0 10px var(--accent-glow, rgba(0, 210, 255, 0.45)), inset 0 1px 2px rgba(255, 255, 255, 0.2);
+}
+
+/* Zone 3: Central Rotary Dial Mounting Well */
+.socket-dial-well {
+  justify-content: center;
+  margin: 12px 0;
+}
+
+.dial-halo-ring {
+  width: 156px;
+  height: 156px;
+  border-radius: 50%;
+  background: #0f1013;
+  box-shadow: 
+    0 0 20px var(--accent-glow, rgba(0, 210, 255, 0.35)),
+    inset 0 0 12px var(--accent-glow-subtle, rgba(0, 210, 255, 0.2)),
+    inset 0 4px 10px rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.dial-knurl-cylinder {
+  width: 144px;
+  height: 144px;
+  border-radius: 50%;
+  background: repeating-conic-gradient(from 0deg, #6c727d 0deg 3deg, #2b2e35 3deg 6deg, #8a919e 6deg 10deg);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.8), inset 0 2px 4px rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+}
+
+.dial-knurl-cylinder:active {
+  cursor: grabbing;
+}
+
+.dial-brushed-face {
+  width: 118px;
+  height: 118px;
+  border-radius: 50%;
+  background: conic-gradient(from 45deg, #9ea4b0, #f0f3f8, #8a909c, #ffffff, #9ea4b0, #f0f3f8, #8a909c);
+  box-shadow: inset 0 2px 6px rgba(255, 255, 255, 0.5), inset 0 -3px 8px rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.dial-index-notch {
+  position: absolute;
+  top: 8px;
+  width: 4px;
+  height: 10px;
+  border-radius: 2px;
+  background: var(--accent-primary, #00d2ff);
+  box-shadow: 0 0 6px var(--accent-primary, #00d2ff);
+}
+
+.dial-center-push-cap {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  border: none;
+  background: radial-gradient(circle at 40% 35%, #464a53 0%, #202227 80%);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.7), inset 0 1px 2px rgba(255, 255, 255, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.dial-center-push-cap:active,
+.dial-center-push-cap.pressed {
+  transform: scale(0.94) translateZ(-4px);
+  box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.9);
+}
+
+.dial-center-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--accent-primary, #00d2ff);
+  box-shadow: 0 0 6px var(--accent-primary, #00d2ff);
+}
+
+/* Zone 4: Lower Hotkeys Crescent Sockets (NAV, MEDIA, PERF) */
+.socket-hotkeys-lower {
+  justify-content: space-between;
+  padding: 0 14px;
+}
+
+.socket-hotkeys-lower .hotkey-btn {
+  width: 74px;
+}
+
+/* Zone 5: Sport Volume Toggle Rocker Socket */
+.socket-volume-well {
+  justify-content: center;
+  margin: 10px 0;
+}
+
+.volume-rocker-barrel {
+  width: 84px;
+  height: 114px;
+  border-radius: 20px;
+  background: #0e0f12;
+  box-shadow: 
+    inset 0 6px 14px rgba(0, 0, 0, 0.95),
+    0 2px 6px rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px;
+  box-sizing: border-box;
+  perspective: 300px;
+}
+
+.rocker-half {
+  width: 100%;
+  height: 44px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(180deg, #2b2e37 0%, #1c1e24 100%);
+  color: #cfd8e5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.15s ease;
+}
+
+.rocker-half:active,
+.rocker-half.pressed {
+  color: var(--accent-primary, #00d2ff);
+}
+
+.rocker-up:active,
+.rocker-up.pressed {
+  transform: rotateX(16deg) translateY(-2px);
+}
+
+.rocker-down:active,
+.rocker-down.pressed {
+  transform: rotateX(-16deg) translateY(2px);
+}
+
+.rocker-symbol {
+  font-size: 10px;
+  line-height: 1;
+}
+
+.rocker-mute-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #3a3d45;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.rocker-mute-dot.muted {
+  background: #ff3344;
+  box-shadow: 0 0 8px #ff3344;
+}
+
+/* Zone 6: Lower Camry Tunnel Inlay Plate */
+.console-tunnel-inlay {
+  width: 100%;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  opacity: 0.8;
+}
+
+.inlay-pinstripe {
+  flex: 1;
+  height: 1px;
+  background: var(--trim-champagne-gold, #d4c4a8);
+}
+
+.inlay-brand-text {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--trim-champagne-gold, #d4c4a8);
+}
+
+/* --------------------------------------------------------------------------
+   9. Narrow Viewport Mobile Fallback Stacking (< 960px)
+   -------------------------------------------------------------------------- */
+@media (max-width: 959px) {
+  #camry-app-root,
+  .simulator-viewport {
+    overflow-y: auto;
+    align-items: flex-start;
+    padding: 16px 0;
+  }
+
+  #cockpit-stage,
+  .cockpit-stage {
+    flex-direction: column;
+    align-items: center;
+    width: var(--display-native-width, 1308px);
+    height: calc(var(--display-native-height, 828px) + var(--console-native-height, 800px) + var(--cockpit-gutter, 28px));
+    transform-origin: top center;
+  }
+}

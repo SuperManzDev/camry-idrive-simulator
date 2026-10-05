@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2012 Camry iDrive — E2E Test Runner</title>
+  <style>
+    /* ==========================================================================
+       2012 Toyota Camry Optitron Automotive Test Runner Styling
+       Zero External Dependencies - Obsidian, Ice Blue, Champagne Gold Theme
+       ========================================================================== */
+    :root {
+      --bg-deep: #07090e;
+      --bg-surface: #0e121a;
+      --bg-card: #141923;
+      --bg-card-hover: #1b2230;
+      --border-subtle: #212938;
+      --border-glow: #00d2ff33;
+      
+      --accent-blue: #00d2ff;
+      --accent-blue-glow: 0 0 12px rgba(0, 210, 255, 0.45);
+      --accent-gold: #d4c4a8;
+      --accent-gold-metallic: #e8d7be;
+      --accent-amber: #ff9900;
+      
+      --status-pass: #00e676;
+      --status-pass-glow: 0 0 10px rgba(0, 230, 118, 0.4);
+      --status-fail: #ff1744;
+      --status-fail-glow: 0 0 10px rgba(255, 23, 68, 0.5);
+      
+      --text-main: #f0f4f8;
+      --text-muted: #8a99ad;
+      --text-dim: #546478;
+
+      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      --font-mono: "SF Mono", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-deep);
+      color: var(--text-main);
+      font-family: var(--font-family);
+      line-height: 1.5;
+      padding: 24px;
+      min-height: 100vh;
+      background-image: 
+        radial-gradient(circle at 50% 0%, rgba(0, 210, 255, 0.08) 0%, transparent 60%),
+        radial-gradient(circle at 100% 100%, rgba(212, 196, 168, 0.04) 0%, transparent 40%);
+    }
+
+    /* Top Master Instrument Cluster Header */
+    .cluster-header {
+      background: linear-gradient(180deg, #161b26 0%, #0d1118 100%);
+      border: 1px solid var(--border-subtle);
+      border-top: 2px solid var(--accent-blue);
+      border-radius: 12px;
+      padding: 20px 28px;
+      margin-bottom: 24px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .emblem-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #252e3d 0%, #111622 100%);
+      border: 2px solid var(--accent-gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 12px rgba(212, 196, 168, 0.25);
+    }
+
+    .emblem-icon svg {
+      width: 26px;
+      height: 26px;
+      fill: var(--accent-gold);
+    }
+
+    .title-wrapper h1 {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .badge-trim {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent-gold);
+      background: rgba(212, 196, 168, 0.12);
+      border: 1px solid rgba(212, 196, 168, 0.35);
+      padding: 2px 8px;
+      border-radius: 4px;
+      letter-spacing: 0.5px;
+    }
+
+    .title-wrapper p {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      background: var(--bg-card);
+      color: var(--text-main);
+      border: 1px solid var(--border-subtle);
+      padding: 9px 18px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      user-select: none;
+    }
+
+    .btn:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--accent-blue);
+      color: #fff;
+      box-shadow: var(--accent-blue-glow);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #0088cc 0%, #005f99 100%);
+      border-color: var(--accent-blue);
+      color: #fff;
+      box-shadow: var(--accent-blue-glow);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #00a0f0 0%, #0077c2 100%);
+      box-shadow: 0 0 16px rgba(0, 210, 255, 0.7);
+    }
+
+    /* Metric Gauges Row */
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .metric-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 16px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    }
+
+    .metric-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--border-subtle);
+    }
+
+    .metric-card.accent-blue::before { background: var(--accent-blue); }
+    .metric-card.accent-green::before { background: var(--status-pass); }
+    .metric-card.accent-red::before { background: var(--status-fail); }
+    .metric-card.accent-gold::before { background: var(--accent-gold); }
+
+    .metric-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 6px;
+    }
+
+    .metric-value {
+      font-size: 26px;
+      font-weight: 700;
+      color: #fff;
+      font-family: var(--font-mono);
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+
+    .metric-value small {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--text-dim);
+    }
+
+    /* Diagnostics Banner */
+    .diag-banner {
+      background: rgba(255, 23, 68, 0.08);
+      border: 1px solid rgba(255, 23, 68, 0.35);
+      border-radius: 8px;
+      padding: 12px 18px;
+      margin-bottom: 24px;
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .diag-banner.visible {
+      display: flex;
+    }
+
+    .diag-content {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #ff80ab;
+      font-size: 13px;
+    }
+
+    /* Progress Track */
+    .progress-track {
+      background: var(--bg-surface);
+      height: 6px;
+      border-radius: 3px;
+      margin-bottom: 24px;
+      overflow: hidden;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #0088cc 0%, var(--accent-blue) 100%);
+      box-shadow: 0 0 10px rgba(0, 210, 255, 0.6);
+      transition: width 0.25s ease;
+    }
+
+    /* Navigation Filter Tabs */
+    .tab-bar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 8px;
+      overflow-x: auto;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .tab-btn:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .tab-btn.active {
+      color: #fff;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-bottom: 2px solid var(--accent-blue);
+    }
+
+    .pill-count {
+      font-size: 11px;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 2px 6px;
+      border-radius: 10px;
+    }
+
+    /* Search & Tools Bar */
+    .filter-bar {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .search-input {
+      flex: 1;
+      min-width: 240px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      padding: 9px 14px;
+      color: #fff;
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .search-input:focus {
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 8px rgba(0, 210, 255, 0.25);
+    }
+
+    /* Test Case List */
+    .test-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .test-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 14px 18px;
+      transition: border-color 0.15s, background-color 0.15s;
+    }
+
+    .test-card:hover {
+      border-color: #313c4e;
+      background: var(--bg-card);
+    }
+
+    .test-card.passed {
+      border-left: 4px solid var(--status-pass);
+    }
+
+    .test-card.failed {
+      border-left: 4px solid var(--status-fail);
+      background: rgba(255, 23, 68, 0.04);
+    }
+
+    .test-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      gap: 12px;
+    }
+
+    .test-header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .status-badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .status-badge.pass {
+      background: rgba(0, 230, 118, 0.15);
+      color: var(--status-pass);
+      border: 1px solid rgba(0, 230, 118, 0.3);
+    }
+
+    .status-badge.fail {
+      background: rgba(255, 23, 68, 0.15);
+      color: var(--status-fail);
+      border: 1px solid rgba(255, 23, 68, 0.3);
+    }
+
+    .tier-tag {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--accent-gold);
+      background: rgba(212, 196, 168, 0.1);
+      border: 1px solid rgba(212, 196, 168, 0.25);
+      padding: 2px 6px;
+      border-radius: 4px;
+      letter-spacing: 0.5px;
+    }
+
+    .test-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .test-header-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--text-dim);
+      font-size: 12px;
+      font-family: var(--font-mono);
+      white-space: nowrap;
+    }
+
+    .test-desc {
+      margin-top: 8px;
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .test-details {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border-subtle);
+      display: none;
+    }
+
+    .test-card.expanded .test-details {
+      display: block;
+    }
+
+    .error-box {
+      background: rgba(255, 23, 68, 0.08);
+      border: 1px solid rgba(255, 23, 68, 0.3);
+      color: #ff80ab;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      margin-top: 8px;
+      white-space: pre-wrap;
+    }
+
+    /* Hidden Iframe for Live Integration */
+    #app-frame {
+      display: none;
+      width: 0;
+      height: 0;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Header Instrument Cluster -->
+  <header class="cluster-header">
+    <div class="brand-group">
+      <div class="emblem-icon">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
+        </svg>
+      </div>
+      <div class="title-wrapper">
+        <h1>
+          2012 TOYOTA CAMRY iDRIVE
+          <span class="badge-trim">XV50 XLE V6</span>
+        </h1>
+        <p>E2E Standalone Test Runner & Verification Suite (Tiers 1 - 5)</p>
+      </div>
+    </div>
+
+    <div class="header-controls">
+      <button id="btn-run-all" class="btn btn-primary">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        Run All Tests
+      </button>
+      <button id="btn-export-json" class="btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+        Export Report
+      </button>
+    </div>
+  </header>
+
+  <!-- Metric Gauges Row -->
+  <section class="metric-grid">
+    <div class="metric-card accent-blue">
+      <div class="metric-label">Total Test Cases</div>
+      <div class="metric-value" id="val-total-tests">--</div>
+    </div>
+    <div class="metric-card accent-green">
+      <div class="metric-label">Tests Passed</div>
+      <div class="metric-value" id="val-passed-tests" style="color: var(--status-pass);">--</div>
+    </div>
+    <div class="metric-card accent-red">
+      <div class="metric-label">Tests Failed</div>
+      <div class="metric-value" id="val-failed-tests">--</div>
+    </div>
+    <div class="metric-card accent-gold">
+      <div class="metric-label">Total Assertions</div>
+      <div class="metric-value" id="val-total-assertions" style="color: var(--accent-gold);">--</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Execution Time</div>
+      <div class="metric-value" id="val-execution-time">-- <small>ms</small></div>
+    </div>
+  </section>
+
+  <!-- Uncaught Error Diagnostics Banner -->
+  <div id="diag-banner" class="diag-banner">
+    <div class="diag-content">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+      <span id="diag-message">Uncaught runtime exceptions detected</span>
+    </div>
+    <button class="btn" style="padding: 4px 10px; font-size: 11px;" onclick="clearDiagnostics()">Dismiss</button>
+  </div>
+
+  <!-- Real-Time Progress Bar -->
+  <div class="progress-track">
+    <div id="progress-bar" class="progress-bar"></div>
+  </div>
+
+  <!-- Filter Tabs -->
+  <nav class="tab-bar">
+    <button class="tab-btn active" data-filter="all">All Tiers <span class="pill-count" id="count-all">0</span></button>
+    <button class="tab-btn" data-filter="tier1">Tier 1: Features <span class="pill-count" id="count-tier1">0</span></button>
+    <button class="tab-btn" data-filter="tier2">Tier 2: Boundaries <span class="pill-count" id="count-tier2">0</span></button>
+    <button class="tab-btn" data-filter="tier3">Tier 3: Combinations <span class="pill-count" id="count-tier3">0</span></button>
+    <button class="tab-btn" data-filter="tier4">Tier 4: Scenarios <span class="pill-count" id="count-tier4">0</span></button>
+    <button class="tab-btn" data-filter="tier5">Tier 5: Adversarial <span class="pill-count" id="count-tier5">0</span></button>
+    <button class="tab-btn" data-filter="failed">Failed Only <span class="pill-count" id="count-failed">0</span></button>
+  </nav>
+
+  <!-- Search Filter -->
+  <div class="filter-bar">
+    <input type="text" id="search-input" class="search-input" placeholder="Filter tests by name, feature, or keyword...">
+  </div>
+
+  <!-- Test Results List Container -->
+  <main id="test-list" class="test-list">
+    <!-- Populated dynamically -->
+  </main>
+
+  <!-- Hidden iframe for live testing if index.html is loaded -->
+  <iframe id="app-frame" src="../index.html"></iframe>
+
+  <!-- Scripts -->
+  <script src="../js/app.js"></script>
+  <script src="../js/display.js"></script>
+  <script src="test-suite.js"></script>
+  <script>
+    'use strict';
+
+    // Global Error & Rejection Interception
+    const uncaughtErrors = [];
+    window.onerror = function (msg, url, line, col, error) {
+      const entry = { type: 'error', message: msg, url, line, col, error };
+      uncaughtErrors.push(entry);
+      displayDiagnostic(`Uncaught Error: ${msg} (${url}:${line})`);
+      return false;
+    };
+
+    window.addEventListener('unhandledrejection', function (event) {
+      const entry = { type: 'unhandledrejection', reason: event.reason };
+      uncaughtErrors.push(entry);
+      displayDiagnostic(`Unhandled Promise Rejection: ${event.reason}`);
+    });
+
+    const origConsoleError = console.error;
+    console.error = function (...args) {
+      origConsoleError.apply(console, args);
+      const text = args.map(a => String(a)).join(' ');
+      if (text.includes('crash:test') || text.includes('Simulated subscriber crash')) return;
+      uncaughtErrors.push({ type: 'console.error', message: text });
+      displayDiagnostic(`Console Error: ${text}`);
+    };
+
+    function displayDiagnostic(text) {
+      const banner = document.getElementById('diag-banner');
+      const msg = document.getElementById('diag-message');
+      msg.textContent = text;
+      banner.classList.add('visible');
+    }
+
+    function clearDiagnostics() {
+      const banner = document.getElementById('diag-banner');
+      banner.classList.remove('visible');
+    }
+
+    // State
+    let currentResults = null;
+    let activeFilter = 'all';
+    let searchQuery = '';
+
+    const els = {
+      totalTests: document.getElementById('val-total-tests'),
+      passedTests: document.getElementById('val-passed-tests'),
+      failedTests: document.getElementById('val-failed-tests'),
+      totalAssertions: document.getElementById('val-total-assertions'),
+      execTime: document.getElementById('val-execution-time'),
+      progressBar: document.getElementById('progress-bar'),
+      testList: document.getElementById('test-list'),
+      btnRunAll: document.getElementById('btn-run-all'),
+      btnExportJson: document.getElementById('btn-export-json'),
+      searchInput: document.getElementById('search-input'),
+      counts: {
+        all: document.getElementById('count-all'),
+        tier1: document.getElementById('count-tier1'),
+        tier2: document.getElementById('count-tier2'),
+        tier3: document.getElementById('count-tier3'),
+        tier4: document.getElementById('count-tier4'),
+        tier5: document.getElementById('count-tier5'),
+        failed: document.getElementById('count-failed')
+      }
+    };
+
+    function executeSuite() {
+      els.progressBar.style.width = '10%';
+      els.btnRunAll.disabled = true;
+      els.btnRunAll.textContent = 'Running...';
+
+      setTimeout(() => {
+        const results = CamryTestSuite.runTestSuite();
+        currentResults = results;
+        els.progressBar.style.width = '100%';
+
+        // Update metrics
+        els.totalTests.textContent = results.totalTests;
+        els.passedTests.textContent = results.passed;
+        els.failedTests.textContent = results.failed;
+        els.failedTests.style.color = results.failed > 0 ? 'var(--status-fail)' : 'var(--status-pass)';
+        els.totalAssertions.textContent = results.totalAssertions;
+        els.execTime.innerHTML = `${results.durationMs} <small>ms</small>`;
+
+        // Update tab counts
+        els.counts.all.textContent = results.totalTests;
+        els.counts.tier1.textContent = results.tierSummary.tier1.total;
+        els.counts.tier2.textContent = results.tierSummary.tier2.total;
+        els.counts.tier3.textContent = results.tierSummary.tier3.total;
+        els.counts.tier4.textContent = results.tierSummary.tier4.total;
+        els.counts.tier5.textContent = results.tierSummary.tier5 ? results.tierSummary.tier5.total : 0;
+        els.counts.failed.textContent = results.failed;
+
+        renderTestCards();
+
+        els.btnRunAll.disabled = false;
+        els.btnRunAll.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> Run All Tests';
+      }, 50);
+    }
+
+    function renderTestCards() {
+      if (!currentResults) return;
+      els.testList.innerHTML = '';
+
+      const filtered = currentResults.tests.filter(t => {
+        if (activeFilter === 'failed' && t.status !== 'failed') return false;
+        if (activeFilter !== 'all' && activeFilter !== 'failed' && t.tier !== activeFilter) return false;
+        if (searchQuery) {
+          const q = searchQuery.toLowerCase();
+          const matchTitle = t.title.toLowerCase().includes(q);
+          const matchDesc = t.description.toLowerCase().includes(q);
+          return matchTitle || matchDesc;
+        }
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        els.testList.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--text-dim);">No tests match the active filter.</div>';
+        return;
+      }
+
+      filtered.forEach(t => {
+        const card = document.createElement('div');
+        card.className = `test-card ${t.status}`;
+        
+        const tierName = t.tier.toUpperCase();
+        const statusLabel = t.status === 'passed' ? 'PASS' : 'FAIL';
+        const statusClass = t.status === 'passed' ? 'pass' : 'fail';
+
+        card.innerHTML = `
+          <div class="test-card-header">
+            <div class="test-header-left">
+              <span class="status-badge ${statusClass}">
+                ${t.status === 'passed' ? '✓' : '✗'} ${statusLabel}
+              </span>
+              <span class="tier-tag">${tierName}</span>
+              <span class="test-title">${escapeHtml(t.title)}</span>
+            </div>
+            <div class="test-header-right">
+              <span>${t.assertionCount} assertions</span>
+              <span>${t.durationMs}ms</span>
+            </div>
+          </div>
+          <div class="test-desc">${escapeHtml(t.description)}</div>
+          <div class="test-details">
+            ${t.errors.length > 0 ? `<div class="error-box">${escapeHtml(t.errors.join('\n'))}</div>` : '<div style="color: var(--status-pass); font-size: 12px;">✓ All assertions in this test passed strictly.</div>'}
+          </div>
+        `;
+
+        card.querySelector('.test-card-header').addEventListener('click', () => {
+          card.classList.toggle('expanded');
+        });
+
+        els.testList.appendChild(card);
+      });
+    }
+
+    function escapeHtml(str) {
+      return (str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    // Tab Handlers
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        activeFilter = btn.getAttribute('data-filter');
+        renderTestCards();
+      });
+    });
+
+    // Search Input
+    els.searchInput.addEventListener('input', (e) => {
+      searchQuery = e.target.value.trim();
+      renderTestCards();
+    });
+
+    // Run All Button
+    els.btnRunAll.addEventListener('click', executeSuite);
+
+    // Export JSON
+    els.btnExportJson.addEventListener('click', () => {
+      if (!currentResults) return;
+      const json = JSON.stringify(currentResults, null, 2);
+      const blob = new Blob([json], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `camry-e2e-test-results-${Date.now()}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    // Auto-run on load
+    window.addEventListener('DOMContentLoaded', () => {
+      executeSuite();
+    });
+  </script>
+</body>
+</html>
